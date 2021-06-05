@@ -1,6 +1,9 @@
+mod util;
+
 use serde::Deserialize;
 use reqwest::Error;
 use reqwest::header::{HeaderMap, HeaderValue, USER_AGENT, AUTHORIZATION};
+use util::from_env;
 
 #[derive(Deserialize, Debug)]
 struct PullRequest {
@@ -29,14 +32,4 @@ async fn main() -> Result<(), Error> {
     let prs: Vec<PullRequest> = res.json().await?;
     println!("{:?}", prs);
     Ok(())
-}
-
-fn from_env(name: &str) -> String {
-    match std::env::var(name) {
-        Ok(v) => v,
-        Err(err) => {
-            println!("{}: {}", err, name);
-            std::process::exit(1);
-        }
-    }
 }
