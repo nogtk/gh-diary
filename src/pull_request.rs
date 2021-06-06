@@ -9,11 +9,15 @@ pub struct PullRequest {
 }
 
 pub fn list() -> Result<Vec<PullRequest>> {
+    let response = client::get(&request_url_constructor()).unwrap();
+    Ok(response.json::<Vec<PullRequest>>()?)
+}
+
+fn request_url_constructor() -> String {
     let owner = from_env("GITHUB_REPO_OWNER");
     let repository = from_env("GITHUB_REPO_NAME");
-    let request_url = format!("https://api.github.com/repos/{owner}/{repo}/pulls",
-                              owner = owner,
-                              repo = repository);
-    let response = client::get(&request_url).unwrap();
-    Ok(response.json::<Vec<PullRequest>>()?)
+    format!("https://api.github.com/repos/{owner}/{repo}/pulls",
+            owner = owner,
+            repo = repository
+    )
 }
