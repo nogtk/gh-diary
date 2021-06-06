@@ -27,6 +27,6 @@ fn request_headers_constructor() -> HeaderMap {
 
 fn tokenize_for_auth() -> String {
     let base = "Token ".to_string();
-    let token = from_env("GITHUB_TOKEN");
+    let token = from_env("GITHUB_PAT");
     format!("{}{}", base, token)
 }
