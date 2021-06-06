@@ -3,21 +3,29 @@ use crate::client;
 use serde::Deserialize;
 use anyhow::Result;
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct PullRequest {
     html_url: String,
+    created_at: String,
+    pub user: User
+}
+
+#[derive(Deserialize, Debug, Clone)]
+pub struct User {
+    login: String
 }
 
 pub fn list() -> Result<Vec<PullRequest>> {
-    let response = client::get(&request_url_constructor()).unwrap();
+    let response = client::get(request_url_constructor().as_str()).unwrap();
     Ok(response.json::<Vec<PullRequest>>()?)
 }
 
-fn request_url_constructor() -> String {
+fn request_url_constructor() -> reqwest::Url {
     let owner = from_env("GITHUB_REPO_OWNER");
     let repository = from_env("GITHUB_REPO_NAME");
-    format!("https://api.github.com/repos/{owner}/{repo}/pulls",
+    let host = format!("https://api.github.com/repos/{owner}/{repo}/pulls",
             owner = owner,
             repo = repository
-    )
+    );
+    reqwest::Url::parse_with_params(&host, &[("per_page", "100")]).unwrap()
 }
