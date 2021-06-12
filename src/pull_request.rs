@@ -24,7 +24,7 @@ pub fn list() -> Result<Vec<PullRequest>> {
 pub fn list_by_author_md(author: String) -> Result<Vec<String>> {
     let mut md_result: Vec<String> = Vec::new();
     let prs = list_by_author(author).unwrap();
-    let prs = filter_by_today(prs).unwrap();
+    // let prs = filter_by_today(prs).unwrap();
     for pr in prs.iter() {
         let buf = format!("[{}]({})", &pr.html_url, &pr.created_at);
         md_result.push(buf);
@@ -37,7 +37,7 @@ fn filter_by_today(prs: Vec<PullRequest>) -> Result<Vec<PullRequest>> {
     let prs = prs
         .iter()
         .filter(|pr|
-            DateTime::parse_from_rfc3339(&pr.created_at).unwrap().date() == Local::today())
+            DateTime::parse_from_rfc3339(&pr.created_at).unwrap().with_timezone(&Local).date() == Local::today())
         .cloned()
         .collect();
     Ok(prs)
