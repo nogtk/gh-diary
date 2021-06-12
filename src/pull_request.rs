@@ -2,6 +2,7 @@ use crate::util::from_env;
 use crate::client;
 use serde::Deserialize;
 use anyhow::Result;
+use chrono::{DateTime, Local};
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct PullRequest {
@@ -23,12 +24,23 @@ pub fn list() -> Result<Vec<PullRequest>> {
 pub fn list_by_author_md(author: String) -> Result<Vec<String>> {
     let mut md_result: Vec<String> = Vec::new();
     let prs = list_by_author(author).unwrap();
+    let prs = filter_by_today(prs).unwrap();
     for pr in prs.iter() {
-        let buf = format!("[{}](link title)", &pr.html_url);
+        let buf = format!("[{}]({})", &pr.html_url, &pr.created_at);
         md_result.push(buf);
     }
 
     Ok(md_result)
+}
+
+fn filter_by_today(prs: Vec<PullRequest>) -> Result<Vec<PullRequest>> {
+    let prs = prs
+        .iter()
+        .filter(|pr|
+            DateTime::parse_from_rfc3339(&pr.created_at).unwrap().date() == Local::today())
+        .cloned()
+        .collect();
+    Ok(prs)
 }
 
 fn list_by_author(author: String) -> Result<Vec<PullRequest>> {
