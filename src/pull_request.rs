@@ -7,7 +7,7 @@ use anyhow::Result;
 pub struct PullRequest {
     html_url: String,
     created_at: String,
-    pub user: User
+    user: User
 }
 
 #[derive(Deserialize, Debug, Clone)]
@@ -18,6 +18,16 @@ pub struct User {
 pub fn list() -> Result<Vec<PullRequest>> {
     let response = client::get(request_url_constructor().as_str()).unwrap();
     Ok(response.json::<Vec<PullRequest>>()?)
+}
+
+pub fn list_by_author(author: String) -> Result<Vec<PullRequest>> {
+    let prs = list()
+        .unwrap()
+        .iter()
+        .filter(|pr| pr.user.login == author)
+        .cloned()
+        .collect();
+    Ok(prs)
 }
 
 fn request_url_constructor() -> reqwest::Url {
