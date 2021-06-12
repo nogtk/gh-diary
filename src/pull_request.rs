@@ -20,7 +20,22 @@ pub fn list() -> Result<Vec<PullRequest>> {
     Ok(response.json::<Vec<PullRequest>>()?)
 }
 
-pub fn list_by_author(author: String) -> Result<Vec<PullRequest>> {
+pub fn list_by_author_md(author: String) -> Result<Vec<String>> {
+    let mut md_result: Vec<String> = Vec::new();
+    let prs = list_by_author(author).unwrap();
+    for pr in prs.iter() {
+        let mut buf: String = "".to_string();
+        buf.push_str("[");
+        buf.push_str(&pr.html_url);
+        buf.push_str("]");
+        buf.push_str("(link title)");
+        md_result.push(buf);
+    }
+
+    Ok(md_result)
+}
+
+fn list_by_author(author: String) -> Result<Vec<PullRequest>> {
     let prs = list()
         .unwrap()
         .iter()
