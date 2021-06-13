@@ -8,6 +8,7 @@ use chrono::{DateTime, Local};
 pub struct PullRequest {
     html_url: String,
     created_at: String,
+    title: String,
     user: User
 }
 
@@ -24,9 +25,9 @@ pub fn list() -> Result<Vec<PullRequest>> {
 pub fn list_by_author_md(author: String) -> Result<Vec<String>> {
     let mut md_result: Vec<String> = Vec::new();
     let prs = list_by_author(author).unwrap();
-    // let prs = filter_by_today(prs).unwrap();
+    let prs = filter_by_today(prs).unwrap();
     for pr in prs.iter() {
-        let buf = format!("[{}]({})", &pr.html_url, &pr.created_at);
+        let buf = format!("- [{}]({})", &pr.title, &pr.html_url);
         md_result.push(buf);
     }
 
