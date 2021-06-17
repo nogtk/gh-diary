@@ -17,11 +17,6 @@ pub struct User {
     login: String
 }
 
-pub fn list() -> Result<Vec<PullRequest>> {
-    let response = client::get(request_url_constructor().as_str()).unwrap();
-    Ok(response.json::<Vec<PullRequest>>()?)
-}
-
 pub fn list_by_author_md(author: String) -> Result<Vec<String>> {
     let mut md_result: Vec<String> = Vec::new();
     let prs = list_by_author(author).unwrap();
@@ -32,6 +27,11 @@ pub fn list_by_author_md(author: String) -> Result<Vec<String>> {
     }
 
     Ok(md_result)
+}
+
+fn list() -> Result<Vec<PullRequest>> {
+    let response = client::get(request_url_constructor().as_str()).unwrap();
+    Ok(response.json::<Vec<PullRequest>>()?)
 }
 
 fn filter_by_today(prs: Vec<PullRequest>) -> Result<Vec<PullRequest>> {
