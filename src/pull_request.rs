@@ -64,6 +64,6 @@ fn request_url_constructor() -> reqwest::Url {
     reqwest::Url::parse_with_params(&host, &query_strings_array()).unwrap()
 }
 
-fn query_strings_array() -> [(&'static str, &'static str); 1] {
-    [("per_page", "100")]
+fn query_strings_array() -> [(&'static str, &'static str); 2] {
+    [("per_page", "50"), ("state", "all")]
 }
