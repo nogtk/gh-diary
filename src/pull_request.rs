@@ -79,8 +79,7 @@ fn is_reviewed(pr_number: u64, reviewer: &String) -> Result<bool> {
     let reviewed = reviews_json
         .iter()
         .any(|pr|
-            pr.state == "APPROVED"
-                && &pr.user.login == reviewer
+            &pr.user.login == reviewer
                 && DateTime::parse_from_rfc3339(&pr.submitted_at).unwrap().with_timezone(&Local).date() == Local::today()
         );
     Ok(reviewed)
