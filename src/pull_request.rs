@@ -22,7 +22,7 @@ pub struct ReviewedPullRequest {
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct User {
-    login: String
+    pub(crate) login: String
 }
 
 pub fn created_list_by_author_md(author: String) -> Result<Vec<String>> {
