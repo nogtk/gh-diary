@@ -28,7 +28,6 @@ pub struct User {
 pub fn created_list_by_author_md(author: String) -> Result<Vec<String>> {
     let mut md_result: Vec<String> = Vec::new();
     let prs = list_by_author(author).unwrap();
-    let prs = filter_by_today_pr(prs).unwrap();
     for pr in prs.iter() {
         let buf = format!("- [{}]({})", &pr.title, &pr.html_url);
         md_result.push(buf);
@@ -52,21 +51,14 @@ fn list() -> Result<Vec<PullRequest>> {
     Ok(response.json::<Vec<PullRequest>>()?)
 }
 
-fn filter_by_today_pr(prs: Vec<PullRequest>) -> Result<Vec<PullRequest>> {
-    let prs = prs
-        .iter()
-        .filter(|pr|
-            DateTime::parse_from_rfc3339(&pr.created_at).unwrap().with_timezone(&Local).date() == Local::today())
-        .cloned()
-        .collect();
-    Ok(prs)
-}
-
 fn list_by_author(author: String) -> Result<Vec<PullRequest>> {
     let prs = list()
         .unwrap()
         .iter()
-        .filter(|pr| pr.user.login == author)
+        .filter(|pr|
+            pr.user.login == author
+            && DateTime::parse_from_rfc3339(&pr.created_at).unwrap().with_timezone(&Local).date() == Local::today()
+        )
         .cloned()
         .collect();
     Ok(prs)
@@ -87,8 +79,7 @@ fn is_reviewed(pr_number: u64, reviewer: &String) -> Result<bool> {
     let reviewed = reviews_json
         .iter()
         .any(|pr|
-            pr.state == "APPROVED"
-                && &pr.user.login == reviewer
+            &pr.user.login == reviewer
                 && DateTime::parse_from_rfc3339(&pr.submitted_at).unwrap().with_timezone(&Local).date() == Local::today()
         );
     Ok(reviewed)
