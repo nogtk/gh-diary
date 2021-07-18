@@ -18,5 +18,9 @@ fn main() -> Result<(), Error> {
     let nogtk_issues = issue::created_list_by_author_md("nogtk".to_string()).unwrap();
     nogtk_issues.iter().for_each(|issue| println!("{}", issue));
 
+    println!("### Today's closed issues");
+    let nogtk_closed_issues = issue::closed_list_by_author_md("nogtk".to_string()).unwrap();
+    nogtk_closed_issues.iter().for_each(|issue| println!("{}", issue));
+
     Ok(())
 }
