@@ -2,6 +2,7 @@ mod util;
 mod client;
 mod pull_request;
 mod issue;
+mod configuration;
 
 use reqwest::Error;
 
