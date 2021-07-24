@@ -1,6 +1,6 @@
 use reqwest::header::{HeaderMap, HeaderValue, USER_AGENT, AUTHORIZATION};
 use anyhow::Result;
-use crate::util::from_env;
+use crate::configuration;
 
 pub fn get(request_url: &str) -> Result<reqwest::blocking::Response> {
     let client = reqwest::blocking::Client::new();
@@ -27,7 +27,7 @@ fn request_headers_constructor() -> HeaderMap {
 
 fn tokenize_for_auth() -> String {
     let base = "Token ".to_string();
-    let token = from_env("GITHUB_PAT");
+    let token = configuration::github_pat();
     format!("{}{}", base, token)
 }
 

@@ -1,5 +1,4 @@
-use crate::util::from_env;
-use crate::client;
+use crate::{client, configuration};
 use serde::Deserialize;
 use anyhow::Result;
 use chrono::{DateTime, Local};
@@ -91,8 +90,8 @@ pub fn reviews(pr_number: u64) -> Result<Vec<ReviewedPullRequest>> {
 }
 
 fn request_url_constructor() -> reqwest::Url {
-    let owner = from_env("GITHUB_REPO_OWNER");
-    let repository = from_env("GITHUB_REPO_NAME");
+    let owner = configuration::repo_owner();
+    let repository = configuration::repo_name();
     let host = format!("https://api.github.com/repos/{owner}/{repo}/pulls",
             owner = owner,
             repo = repository
@@ -101,8 +100,8 @@ fn request_url_constructor() -> reqwest::Url {
 }
 
 fn reviews_url_constructor(pr_number: u64) -> reqwest::Url {
-    let owner = from_env("GITHUB_REPO_OWNER");
-    let repository = from_env("GITHUB_REPO_NAME");
+    let owner = configuration::repo_owner();
+    let repository = configuration::repo_name();
     let url = format!("https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}/reviews",
                        owner = owner,
                        repo = repository,

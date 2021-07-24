@@ -2,8 +2,7 @@ use anyhow::Result;
 use crate::pull_request::User;
 use chrono::{DateTime, Local};
 use serde::Deserialize;
-use crate::client;
-use crate::util::from_env;
+use crate::{client, configuration};
 
 #[derive(Deserialize, Debug, Clone)]
 struct Issue {
@@ -77,8 +76,8 @@ fn list(author: String) -> Result<Vec<Issue>> {
 }
 
 fn request_url_constructor(author: String) -> reqwest::Url {
-    let owner = from_env("GITHUB_REPO_OWNER");
-    let repository = from_env("GITHUB_REPO_NAME");
+    let owner = configuration::repo_owner();
+    let repository = configuration::repo_name();
     let url = format!("https://api.github.com/repos/{owner}/{repo}/issues",
         owner = owner,
         repo = repository
